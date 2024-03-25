@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Movie Search</title>
+</head>
+<body>
+<h1>Movie Search</h1>
+<form action="http://localhost:38947/WebApplication14/MovieSearchServlet"
+method="post">
+<label for="searchTerm">Search by Title or Actor:</label><br>
+<input type="text" id="searchTerm" name="searchTerm" required><br><br>
+<input type="submit" value="Search">
+</form>
+</body>
+</html>
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+@WebServlet("/movies")
+public class MovieServlet extends HttpServlet {
+private static final long serialVersionUID = 1L;
+private List<Movie> movies = new ArrayList<>();
+public MovieServlet() { movies.add(new Movie("Jailor", "Rajinikanth"));
+movies.add(new Movie("Vikram", "Kamal Hassan"));
+movies.add(new Movie("Ghilli", "Vijay"));
+movies.add(new Movie("Mankatha", "Ajith"));
+movies.add(new Movie("Alaipayudhey", "Madhavan"));
+movies.add(new Movie("Soorarai Potru", "Surya"));
+movies.add(new Movie("3", "Dhanush"));
+}
+}
+protected void doGet(HttpServletRequest request, HttpServletResponse response) throws
+ServletException, IOException {
+String action = request.getParameter("action");
+if ("search".equals(action)) {
+String query = request.getParameter("query");
+List<Movie> searchResults = searchMovies(query);
+request.setAttribute("movies", searchResults);
+request.getRequestDispatcher("/movies.jsp").forward(request, response);
+} else {
+request.setAttribute("movies", movies);
+request.getRequestDispatcher("/movies.jsp").forward(request, response);
+}
+}
+private List<Movie> searchMovies(String query) {
+List<Movie> results = new ArrayList<>();
+for (Movie movie : movies) {
+if (movie.getTitle().toLowerCase().contains(query.toLowerCase()) ||
+movie.getActors().toLowerCase().contains(query.toLowerCase())) {
+results.add(movie);
+}
+}
+return results;
+}
+}
